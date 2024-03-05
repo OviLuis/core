@@ -24,11 +24,11 @@ steps:
 
 - task: TwineAuthenticate@1
   inputs:
-    artifactFeed: test_artifact_library
+    artifactFeed: math-library-example
   displayName: 'Twine Authenticate'
 
 - script: |
-    python -m twine upload -r test_artifact_library --config-file $(PYPIRC_PATH) dist/*
+    python -m twine upload -r math-library-example --config-file $(PYPIRC_PATH) dist/*
   displayName: 'Upload to feed'
 
 
