@@ -6,37 +6,36 @@
 trigger:
 - main
 
-variables:
-  python.version: '3.9'
+pool:
+  vmImage: 'ubuntu-latest'
 
-stages:
-- stage: publish
-  jobs:
-  - job: build
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(python.version)'
-      displayName: 'Use Python $(python.version)'
 
-    - script: |
-        pip install build
-        pip install twine
-      displayName: 'Install build and twine'
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.9'
+  displayName: 'Use Python 3.9'
 
-    - script: |
-        python -m build -w
-      displayName: 'Python build'
+- script: |
+    python -m pip install --upgrade pip
+    python -m pip install --upgrade build setuptools twine
+    python -m build
+  displayName: 'Install dependencies'
 
-    - task: TwineAuthenticate@1
-      inputs:
-        artifactFeed: <PROJECT_NAME/FEED_NAME>
-      displayName: 'Twine Authenticate'
+- task: TwineAuthenticate@1
+  inputs:
+    artifactFeed: test_artifact_library
+  displayName: 'Twine Authenticate'
 
-    - script: |
-        python -m twine upload -r <FEED_NAME> --config-file $(PYPIRC_PATH) dist/*.whl
-      displayName: 'Upload to feed'
+- script: |
+    python -m twine upload -r test_artifact_library --config-file $(PYPIRC_PATH) dist/*
+  displayName: 'Upload to feed'
+
+
+
+
+
+
+
 
 
